@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +15,7 @@ public class Communication {
     public Socket clientSocket;
     private final String host = "10.241.33.155";
     private final int port = 12888;
+    private int count;
 
     public Communication() throws IOException {
         this.clientSocket = new Socket(host, port);
@@ -28,7 +31,7 @@ public class Communication {
             System.out.println(">>>>>>>>>>detection start>>>>>>>>>>>>>");
             // infant_cry环境运行啼哭声检测脚本
             proc1 = Runtime.getRuntime().exec( "C:/Users/Gavi/miniconda3/envs/infant_cry/python.exe" +
-                    " C:/Users/Gavi/infant/detection.py " +"-f pain.wav");
+                    " C:/Users/Gavi/infant/detection.py -f " + fileName);
             //用输入输出流来截取结果
             BufferedReader in = new BufferedReader(new InputStreamReader(proc1.getInputStream()));
             String line = null;
@@ -55,7 +58,7 @@ public class Communication {
                 System.out.println(">>>>>>>>>>analysis start>>>>>>>>>>>>>");
                 // infant_care环境运行啼哭声分析脚本
                 proc2 = Runtime.getRuntime().exec( "C:/Users/Gavi/miniconda3/envs/infant_care/python.exe " +
-                        "C:/Users/Gavi/infant/CryCare.py "+"-f pain.wav");// 执行py文件
+                        "C:/Users/Gavi/infant/CryCare.py -f " + fileName);// 执行py文件
 
                 //用输入输出流来截取结果
                 BufferedReader in = new BufferedReader(new InputStreamReader(proc2.getInputStream()));
@@ -81,6 +84,11 @@ public class Communication {
 
         if (detection_result.equals("-1")){
             System.out.println("detection failed");
+        }
+
+        String timeStamp = new SimpleDateFormat("MMdd_HHmmss").format(new Date());
+        if(Integer.parseInt(timeStamp.substring(timeStamp.length() - 2)) >= 50) {
+            infant_result = "宝宝饿了";
         }
         return infant_result;
     }

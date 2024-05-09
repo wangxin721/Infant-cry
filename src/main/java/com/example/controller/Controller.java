@@ -34,12 +34,23 @@ public class Controller {
 
         System.out.println("File uploaded successfully!");
 
-        String name = "C:/Users/Gavi/infant/" + timeStamp + file.getOriginalFilename();
+        String name = timeStamp + file.getOriginalFilename();
         String result = communication.getResult(name);
 //        String result = name;
         System.out.println("result: " + result);
         return result;
     }
+
+    @PostMapping("/upload_string")
+    public String handleStringUpload(@RequestParam("file_name") String file_name) throws IOException, InterruptedException {
+        Communication communication = new Communication();
+        System.out.println("File uploaded successfully!");
+
+        String result = communication.getResult(file_name);
+        System.out.println("result: " + result);
+        return result;
+    }
+
 
     @GetMapping("/test")
     public String test() {
